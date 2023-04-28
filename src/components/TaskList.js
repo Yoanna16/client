@@ -1,38 +1,64 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { HStack, StackDivider, VStack, Text, Box, Image } from '@chakra-ui/react'
 import ClearTasks from './ClearTasks';
 import DeleteTask from './DeleteTask';
-import img from '../images/empty';
+import img from '../images/empty.svg';
+import { supabase } from '../supabase';
+import { useRealtime } from 'react-supabase'
 
 function TaskList() {
+    const [tasks, setTasks] = useState([]);
 
-    const noTasks = () => {
-        return (      <Box align="center">
-        <Image src={img} mt="30px" maxW="95%" />
-      </Box> )
+    async function fetchData() {
+        let { data: tasks, error } = await supabase.from('todos').select('*');
+        console.log(tasks)
+        setTasks(tasks);
     }
-  return (
-    <>
-      <VStack
-      divider={<StackDivider />}
-      borderColor="gray.100"
-      borderWidth="2px"
-      p="2"
-      borderRadius="lg"
-      w="100%"
-      maxW={{ base: '90vw', sm: '80vw', lg: '50vw', xl: '30vw' }}
-      alignItems="stretch"
-      >
-{/*         <HStack>
-            <Text w="100%" p="8px" borderRadius="lg">
-                Wash the dishes
-            </Text>
-            <DeleteTask />
-        </HStack> */}
-      </VStack>
-      <ClearTasks />
-    </>
+
+
+
+    useEffect(() => {
+    const tasks = supabase.channel('custom-all-channel')
+  .on(
+    'postgres_changes',
+    { event: '*', schema: 'public', table: 'todos' },
+    (payload) => {
+      console.log('Change received!', payload)
+    }
   )
+  .subscribe()
+        fetchData();
+    }, []);
+
+    if (!tasks.length) {
+        return (<Box align="center">
+            <Image src={img} mt="30px" maxW="95%" />
+        </Box>)
+    }
+    return (
+        <>
+            <VStack
+                divider={<StackDivider />}
+                borderColor="gray.100"
+                borderWidth="2px"
+                p="2"
+                borderRadius="lg"
+                w="100%"
+                maxW={{ base: '90vw', sm: '80vw', lg: '50vw', xl: '30vw' }}
+                alignItems="stretch"
+            >
+                {tasks.map(task => (
+                    <HStack key={task.id}>
+                        <Text w="100%" p="8px" borderRadius="lg">
+                            {task.text}
+                        </Text>
+                        <DeleteTask id={task.id}  />
+                    </HStack>
+                ))}
+            </VStack>
+            <ClearTasks />
+        </>
+    )
 }
 
 export default TaskList
