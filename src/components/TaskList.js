@@ -4,9 +4,9 @@ import ClearTasks from './ClearTasks';
 import DeleteTask from './DeleteTask';
 import img from '../images/empty.svg';
 import { supabase } from '../supabase';
-import { useRealtime } from 'react-supabase'
 
-function TaskList() {
+function TaskList({ user }) {
+
     const [tasks, setTasks] = useState([]);
 
     async function fetchData() {
