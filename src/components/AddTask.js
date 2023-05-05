@@ -1,30 +1,19 @@
 import React, { useState } from 'react'
-import { Button, HStack, Input, useToast } from '@chakra-ui/react';
+import { Button, HStack, Input } from '@chakra-ui/react';
 import { supabase } from '../supabase';
 
 function AddTask() {
   const [text, setText] = useState('');
-  const [loading, setLoading] = useState(false);
-  const toast = useToast();
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-    setLoading(true);
-    const { data, error } = await supabase.from('todos').insert([{ text }]);
-    setLoading(false);
+    const { data: { user } } = await supabase.auth.getUser();
+    const { data, error } = await supabase.from('todos').insert([{ text: text, owner_id: user.id }]);
+    console.log(data)
     setText('');
-
-    toast({
-      title: error || 'Task added!',
-      position: 'top',
-      status: error ? 'error' : 'success',
-      duration: 2000,
-      isClosable: true,
-    });
     window.location.reload();
   }
-
 
   return (
     <form onSubmit={handleSubmit}>
@@ -35,14 +24,11 @@ function AddTask() {
           placeholder='Do the laundry'
           value={text}
           onChange={e => setText(e.target.value)}
-          disabled={loading} 
           />
           <Button 
           colorScheme="blue"
           px="10" h="100%" 
           type="submit"
-          isLoading={loading}
-          loadingText="Adding"
           > 
             Add
           </Button>

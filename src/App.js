@@ -24,7 +24,6 @@ function App() {
     return () => subscription.unsubscribe()
   }, [])
 
-  console.log(session)
 
   if (!session) {
     return (<Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} providers={["google"]} />)
@@ -42,13 +41,9 @@ function App() {
       bgClip="text"
       >
         Todo List
-      </Heading>
-
-      <Router>
-        <Routes>
-          <Route path='/' element={<TaskList user={session.user} />}/>
-        </Routes>
-      </Router>
+      </Heading>      
+      <AddTask/>        
+      <TaskList/>
     </VStack>
     </>
     

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { HStack, StackDivider, VStack, Text, Box, Image } from '@chakra-ui/react'
-import ClearTasks from './ClearTasks';
 import DeleteTask from './DeleteTask';
 import img from '../images/empty.svg';
 import { supabase } from '../supabase';
 
-function TaskList({ user }) {
+function TaskList() {
 
     const [tasks, setTasks] = useState([]);
+    
 
     async function fetchData() {
         let { data: tasks, error } = await supabase.from('todos').select('*');
@@ -56,7 +56,6 @@ function TaskList({ user }) {
                     </HStack>
                 ))}
             </VStack>
-            <ClearTasks />
         </>
     )
 }
