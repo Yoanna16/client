@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { HStack, StackDivider, VStack, Text, Box, Image, Radio, Checkbox } from '@chakra-ui/react'
-import DeleteTask from './DeleteTask';
+import TaskItem from './TaskItem';
 import img from '../images/empty.svg';
 import { supabase } from '../supabase';
 
 function TaskList() {
 
     const [tasks, setTasks] = useState([]);
-    const [doneValue, setDoneValue] = useState(false);
     
 
     async function fetchData() {
@@ -15,16 +14,6 @@ function TaskList() {
         let { data: tasks, error } = await supabase.from('todos').select('*').eq('owner_id', user.id);
         console.log(tasks)
         setTasks(tasks);
-    }
-
-    async function handleOnChange(e) {
-        const value = e.target.checked;
-        setDoneValue(value);
-        const { data: { user } } = await supabase.auth.getUser();
-        const { data, error } = await supabase
-        .from('todos')
-        .update({ done: value })
-        .match({ owner_id: user.id })
     }
 
 
@@ -60,12 +49,7 @@ function TaskList() {
                 alignItems="stretch"
             >
                 {tasks.map(task => (
-                    <HStack key={task.id}>
-                        <Text w="100%" p="8px" borderRadius="lg">
-                            {task.text}
-                        </Text>
-                        <Checkbox onChange={handleOnChange} defaultChecked={task.done}></Checkbox>
-                    </HStack>
+                    <TaskItem id ={task.id} text={task.text} done={task.done}></TaskItem>
                 ))}
             </VStack>
         </>
