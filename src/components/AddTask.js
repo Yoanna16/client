@@ -9,7 +9,7 @@ function AddTask() {
     e.preventDefault();
 
     const { data: { user } } = await supabase.auth.getUser();
-    const { data, error } = await supabase.from('todos').insert([{ text: text, owner_id: user.id }]);
+    const { data, error } = await supabase.from('todos').insert([{ text: text, owner_id: user.id, done: false }]);
     console.log(data)
     setText('');
     window.location.reload();
