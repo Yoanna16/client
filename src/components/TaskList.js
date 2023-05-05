@@ -7,27 +7,26 @@ import { supabase } from '../supabase';
 function TaskList() {
 
     const [tasks, setTasks] = useState([]);
-    
+
 
     async function fetchData() {
         const { data: { user } } = await supabase.auth.getUser();
         let { data: tasks, error } = await supabase.from('todos').select('*').eq('owner_id', user.id);
-        console.log(tasks)
         setTasks(tasks);
     }
 
 
 
     useEffect(() => {
-    const tasks = supabase.channel('custom-all-channel')
-  .on(
-    'postgres_changes',
-    { event: '*', schema: 'public', table: 'todos' },
-    (payload) => {
-      console.log('Change received!', payload)
-    }
-  )
-  .subscribe()
+        const tasks = supabase.channel('custom-all-channel')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'todos' },
+                (payload) => {
+                    console.log('Change received!', payload)
+                }
+            )
+            .subscribe()
         fetchData();
     }, []);
 
@@ -49,7 +48,7 @@ function TaskList() {
                 alignItems="stretch"
             >
                 {tasks.map(task => (
-                    <TaskItem id ={task.id} text={task.text} done={task.done}></TaskItem>
+                    <TaskItem id={task.id} text={task.text} done={task.done}></TaskItem>
                 ))}
             </VStack>
         </>
