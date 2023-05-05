@@ -3,7 +3,7 @@ import { HStack, StackDivider, VStack, Text, Box, Image, Radio, Checkbox, Badge 
 import { supabase } from '../supabase';
 
 
-const TaskItem = ({ id, text, done, prio }) => {
+const TaskItem = ({ id, text, done, prio, badgeColor }) => {
 
   async function handleOnChange(e) {
     const value = e.target.checked;
@@ -14,12 +14,13 @@ const TaskItem = ({ id, text, done, prio }) => {
       .match({ owner_id: user.id })
   }
 
+
   return (
     <HStack key={id}>
       <Text w="100%" p="8px" borderRadius="lg">
         {text}
       </Text>
-      <Badge>
+      <Badge colorScheme={badgeColor}>
         {prio}
       </Badge>
       <Checkbox onChange={handleOnChange} defaultChecked={done}></Checkbox>

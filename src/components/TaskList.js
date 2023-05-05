@@ -47,9 +47,9 @@ function TaskList() {
                 maxW={{ base: '90vw', sm: '80vw', lg: '50vw', xl: '30vw' }}
                 alignItems="stretch"
             >
-                {tasks.map(task => (
-                    <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio}></TaskItem>
-                ))}
+                {tasks.map(task => {
+                    return <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio}></TaskItem>
+                })}
             </VStack>
         </>
     )

@@ -31,7 +31,7 @@ function App() {
 
   return (
     <>
-    <VStack p={4} minH="100vh">
+    <VStack p={10} minH="100vh">
       <Heading
       mt="20"
       p="5"
