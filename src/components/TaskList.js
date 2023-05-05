@@ -48,7 +48,7 @@ function TaskList() {
                 alignItems="stretch"
             >
                 {tasks.map(task => (
-                    <TaskItem id={task.id} text={task.text} done={task.done}></TaskItem>
+                    <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio}></TaskItem>
                 ))}
             </VStack>
         </>
