@@ -15,8 +15,6 @@ function TaskList() {
         setTasks(tasks);
     }
 
-
-
     useEffect(() => {
         const tasks = supabase.channel('custom-all-channel')
             .on(
