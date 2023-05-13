@@ -1,5 +1,5 @@
 import React from 'react';
-import { HStack, StackDivider, VStack, Text, Box, Image, Radio, Checkbox, Badge } from '@chakra-ui/react'
+import { HStack, StackDivider, VStack, Text, Box, Image, Radio, Checkbox, Badge, color } from '@chakra-ui/react'
 import { supabase } from '../supabase';
 
 
@@ -14,13 +14,19 @@ const TaskItem = ({ id, text, done, prio, badgeColor }) => {
       .match({ owner_id: user.id })
   }
 
+  const colorScheme = { 
+    'low': 'yellow', 
+    'high': 'red', 
+    'medium': 'green',
+  }
+
 
   return (
     <HStack key={id}>
       <Text w="100%" p="8px" borderRadius="lg">
         {text}
       </Text>
-      <Badge colorScheme={badgeColor}>
+      <Badge colorScheme={colorScheme.prio}>
         {prio}
       </Badge>
       <Checkbox onChange={handleOnChange} defaultChecked={done}></Checkbox>
