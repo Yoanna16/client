@@ -65,6 +65,13 @@ function AddTask() {
             <option value={prio}>{prio}</option>
           ))}
         </Select>
+        </HStack>
+        <HStack
+        my="10"
+        h="45"
+        spacing={8}
+        direction="row"
+        justifyContent="space-between">
         <Slider
           id="slider"
           defaultValue={5}

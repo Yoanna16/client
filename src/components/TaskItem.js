@@ -10,7 +10,7 @@ const TaskItem = ({ id, text, done, prio, badgeColor }) => {
     const { data: { user } } = await supabase.auth.getUser();
     const { data, error } = await supabase
       .from('todos')
-      .update({ done: value })
+      .update({ done: value, done_time: new Date()})
       .match({ owner_id: user.id })
   }
 

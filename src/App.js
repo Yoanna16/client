@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { Heading, VStack, Button } from '@chakra-ui/react';
+import { Heading, VStack, Button, Slider, SliderMark, SliderTrack, SliderFilledTrack, Tooltip, SliderThumb } from '@chakra-ui/react';
 import TaskList from './components/TaskList';
 import AddTask from './components/AddTask';
 import { supabase } from './supabase';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
+import axios  from 'axios';
+import { requestBody } from './dataManager';
+import DefineStress from './components/DefineStress';
 
 function App() {
   const [session, setSession] = useState(null)
@@ -16,18 +19,28 @@ function App() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        queryParams: {
-        access_type: 'offline',
-        prompt: 'consent',
-      },
         scopes: 'https://www.googleapis.com/auth/fitness.heart_rate.read',
       }
     });
+
     if(error) {
       alert("Error logging in to Google provider with Supabase");
       console.log(error);
     }
+    console.log(data.session)
     setToken(data.session.provider_token) // use to access provider API
+  }
+
+  const fetchHeartRateData = async () => {
+    const response = await axios.post('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', requestBody,
+      {  params: {
+        'key': process.env.API_KEY
+      },
+      headers: {
+          Authorization: `Bearer ${session.provider_token}`,
+        },
+      }
+    ).then((resp) => console.log(resp.data.bucket));
   }
 
   useEffect(() => {
@@ -39,9 +52,12 @@ function App() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
     })
-    
     return () => subscription.unsubscribe()
   }, [])
+
+  useEffect(() => {
+    fetchHeartRateData();
+  }, session)
 
   if (!session) {
     return (<>
@@ -52,7 +68,7 @@ function App() {
 
   return (
     <>
-    <VStack p={10} minH="100vh">
+    <VStack p={2} minH="100vh">
       <Heading
       mt="20"
       p="5"
@@ -62,7 +78,8 @@ function App() {
       bgClip="text"
       >
         Todo List
-      </Heading>      
+      </Heading>    
+      <DefineStress />  
       <AddTask/>        
       <TaskList/>
     </VStack>
