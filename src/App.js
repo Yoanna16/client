@@ -79,7 +79,6 @@ function App() {
       >
         Todo List
       </Heading>    
-      <DefineStress />  
       <AddTask/>        
       <TaskList/>
     </VStack>
