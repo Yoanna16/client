@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   HStack,
   Input,
-  Select,
-  Stack,
   Slider,
-  SliderMark,
   SliderFilledTrack,
   SliderTrack,
   Tooltip,
@@ -18,22 +15,16 @@ function AddTask() {
   const [text, setText] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [showTooltip, setShowTooltip] = useState(false);
-  const [todos, setTodos] = useState([]);
-
-
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  
     const { data, error } = await supabase
       .from('todos')
       .insert([
         {
           text: text,
-          owner_id: user.id,
           done: false,
           prio: '',
           difficulty: difficulty ? difficulty : 10,

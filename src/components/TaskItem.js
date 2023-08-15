@@ -5,7 +5,7 @@ import { renderColorBadge } from '../helpers';
 
 
 const TaskItem = ({ id, text, done, prio, difficulty }) => {
-  const prios = ['high', 'medium', 'low'];
+  const difficulties = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100];
 
   async function handleOnChange(e) {
     const value = e.target.checked;
@@ -19,7 +19,7 @@ const TaskItem = ({ id, text, done, prio, difficulty }) => {
     const value = e.target.value;
     const { data } = await supabase
     .from('todos')
-    .update({prio: value})
+    .update({difficulty: value})
     .eq('id', id)
     window.location.reload();
   }
@@ -29,26 +29,26 @@ const TaskItem = ({ id, text, done, prio, difficulty }) => {
       <Text w="100%" p="8px" borderRadius="lg">
         {text}
       </Text>
-      {
-        prio ?
       <>
       <Badge colorScheme={renderColorBadge(prio)}>
         {prio}
       </Badge> 
       </>      
- 
-      : 
-      <Select isRequired={true} onChange={handleChange} placeholder='Select prio'>
-          {prios.map(prio => (
-            <option value={prio}>{prio}</option>
-          ))}
-      </Select>
-      }
-      
-    
+{    
+        difficulty ?
+      <>
       <Badge variant='outline' colorScheme='green'>
         Difficulty: {difficulty}
      </Badge>
+      </>      
+ 
+      : 
+      <Select isRequired={true} onChange={handleChange} placeholder='Define difficulty'>
+          {difficulties.map(diff => (
+            <option value={diff}>{diff}</option>
+          ))}
+      </Select>
+      }
      
       <Checkbox onChange={handleOnChange} defaultChecked={done}></Checkbox>
     </HStack>

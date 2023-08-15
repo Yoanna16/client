@@ -10,8 +10,7 @@ function TaskList() {
 
 
     async function fetchData() {
-        const { data: { user } } = await supabase.auth.getUser();
-        let { data: tasks, error } = await supabase.from('todos').select('*').eq('owner_id', user.id);
+        let { data: tasks, error } = await supabase.from('todos').select('*');
         setTasks(tasks);
     }
 
