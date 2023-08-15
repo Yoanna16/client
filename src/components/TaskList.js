@@ -41,11 +41,12 @@ function TaskList() {
                 p="2"
                 borderRadius="lg"
                 w="max"
-                maxW={{ base: '90vw', sm: '80vw', lg: '50vw', xl: '30vw' }}
+                // maxW={{ base: '90vw', sm: '80vw', lg: '50vw', xl: '30vw' }}
                 alignItems="stretch"
+                shouldWrapChildren={true}
             >
                 {tasks.map(task => {
-                    return <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio} difficulty={task.difficulty}></TaskItem>
+                    return <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio} difficulty={task.difficulty} details={task.details}></TaskItem>
                 })}
             </VStack>
         </>

@@ -11,7 +11,7 @@ import axios  from 'axios';
 function App() {
   return (
     <>
-    <VStack p={2} minH="100vh">
+    <VStack>
       <Heading
       mt="20"
       p="5"
@@ -22,7 +22,6 @@ function App() {
       >
         Todo List
       </Heading>    
-      <AddTask/>        
       <TaskList/>
     </VStack>
     </>
