@@ -1,5 +1,5 @@
 
- function getBaselineValues(baseline1, baseline2) {
+export function getBaselineValues(baseline1, baseline2) {
     // Calculate the midpoint between baseline1 and baseline2
     const midpoint = (baseline1 + baseline2) / 2;
 
@@ -20,7 +20,7 @@
     ]
 }
 
- function getMeasuredStress(hrv, baseline) {
+export function getMeasuredStress(hrv, baseline) {
 
     const [ thresholdUpper, thresholdLower ] = baseline;
 
@@ -40,20 +40,20 @@
 }
 
 // Calculate Ideal Difficulty
- function getIdealDifficulty(measuredStress) {
+export function getIdealDifficulty(measuredStress) {
     let idealDiff = -50*measuredStress+100;
     return idealDiff
 }
 
 // Calculate absolute differences between the ideal difficulty and the difficulties of all tasks:
- function calculateAbsoluteDifferencesDifficulty(idealDifficulty, taskDifficulties) {
+export function calculateAbsoluteDifferencesDifficulty(idealDifficulty, taskDifficulties) {
     const difficultyDifferences = taskDifficulties.map(taskDifficulty => Math.abs(idealDifficulty - taskDifficulty));
     return difficultyDifferences;
 }
 
 
 // Calculate task scores considering both difficulty and priority 
- function calculateTaskScores(difficultyDifferences, taskPriorities) {
+export function calculateTaskScores(difficultyDifferences, taskPriorities) {
     const priorityWeight = 8;
     return difficultyDifferences.map((difficultyDifference, index) =>
         difficultyDifference - priorityWeight * taskPriorities[index]
@@ -61,12 +61,12 @@
 }
 
 // Recommend the task with the minimum score, which represents a balance between difficulty and priority: 
- function recommendTask(taskScores) {
+export function recommendTask(taskScores) {
     const minScore = Math.min(...taskScores);
     return taskScores.indexOf(minScore);
 }
 
-const baseline1 = 90; 
+/* const baseline1 = 90; 
 const baseline2 = 30;
 const hrv = 71;
 const taskDifficulties = [60, 70, 80, 90, 100]; // Example list of task difficulties
@@ -84,4 +84,4 @@ const difficultyDifferences = calculateAbsoluteDifferencesDifficulty(idealDiffic
 const taskScores = calculateTaskScores(difficultyDifferences, taskPriorities);
 const recommendedTaskIndex = recommendTask(taskScores);
 
-console.log(`Recommended Task Index: ${recommendedTaskIndex}`);
+console.log(`Recommended Task Index: ${recommendedTaskIndex}`); */
