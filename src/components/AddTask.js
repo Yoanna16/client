@@ -26,8 +26,8 @@ function AddTask() {
         {
           text: text,
           done: false,
-          prio: '',
-          difficulty: difficulty ? difficulty : 10,
+          prio: 0,
+          difficulty: 0
         },
       ]);
     console.log(data);

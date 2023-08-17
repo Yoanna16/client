@@ -21,7 +21,7 @@ function App() {
       bgClip="text"
       >
         Todo List
-      </Heading>    
+      </Heading>  
       <TaskList/>
     </VStack>
     </>
