@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { HStack, StackDivider, VStack, Text, Box, Image, Radio, Checkbox } from '@chakra-ui/react'
+import { HStack, StackDivider, VStack, Text, Box, Image, Radio, Checkbox, Button, IconButton } from '@chakra-ui/react'
+import { CheckIcon } from '@chakra-ui/icons'
 import TaskItem from './TaskItem';
 import img from '../images/empty.svg';
 import { supabase } from '../supabase';
@@ -46,6 +47,12 @@ function TaskList() {
                 alignItems="stretch"
                 shouldWrapChildren={true}
             >
+                <HStack spacing={4}>
+                <Text w="120%" p="8px" borderRadius="lg"></Text>
+                <Button m='0px'minW={'-webkit-min-content'}variant={'link'} colorScheme="blue" margin-right={5}>Prio</Button>
+                <Button minW={'-webkit-min-content'}variant={'link'}  colorScheme="blue"margin-right={5}>Difficulty</Button>
+                <IconButton minW={'-webkit-min-content'}variant={'link'}  colorScheme="blue" icon={<CheckIcon />}></IconButton>
+                </HStack>
                 {tasks.map(task => {
                     return <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio} difficulty={task.difficulty} details={task.details}></TaskItem>
                 })}

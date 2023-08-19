@@ -7,6 +7,7 @@ import { supabase } from './supabase';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import axios  from 'axios';
+import RecommendTask from './components/Recommended_Task';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
       >
         Todo List
       </Heading>  
+      <RecommendTask />
       <TaskList/>
     </VStack>
     </>

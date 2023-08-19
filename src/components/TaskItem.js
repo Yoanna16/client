@@ -20,11 +20,11 @@ import {
 import { useDisclosure } from '@chakra-ui/react'
 import { supabase } from '../supabase';
 import { renderColorBadge } from '../helpers';
+import Details from './Details';
+import Difficulty from './Difficulty';
 
 
 const TaskItem = ({ id, text, done, prio, difficulty, details }) => {
-
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [showTooltip, setShowTooltip] = useState(false);
   let newPrio = '';
@@ -54,68 +54,16 @@ const TaskItem = ({ id, text, done, prio, difficulty, details }) => {
 
   return (
     <HStack key={id} spacing={4}>
-      <Text w="100%" p="8px" borderRadius="lg">
+      <Text w="100%" p="5px" borderRadius="lg">
         {text}
       </Text>
-      { details ?
-      <>
-      <>
-      <Button right="10px"variant={'link'} onClick={onOpen} colorScheme="blue">Details</Button>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {details}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-      </>
+      <Details details={details}/>
       <>
         <Badge colorScheme={renderColorBadge(newPrio)}>
           {newPrio}
         </Badge>
       </>
-      </>
-      :
-      <></>
-    }
-      {
-        difficulty ?
-          <>
-            <Badge variant='outline' colorScheme='green'>
-              Difficulty: {difficulty}
-            </Badge>
-          </>
-
-          :
-          <Slider
-          id="slider"
-          defaultValue={5}
-          min={0}
-          max={100}
-          size="lg"
-          colorScheme="blue"
-          onChangeEnd={handleChange}
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)} 
-        >
-          <SliderTrack>
-            <SliderFilledTrack />
-          </SliderTrack>
-           <Tooltip
-            hasArrow
-            bg="blue.500"
-            color="white"
-            placement="top"
-            isOpen={showTooltip}
-          >
-            <SliderThumb />
-          </Tooltip> 
-        </Slider>
-      }
-
+      <Difficulty difficulty={difficulty} id={id} />
       <Checkbox onChange={handleOnChange} defaultChecked={done}></Checkbox>
     </HStack>
   )
