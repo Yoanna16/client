@@ -28,7 +28,7 @@ const TaskItem = ({ id, text, done, prio, difficulty, details }) => {
 
   const [showTooltip, setShowTooltip] = useState(false);
   let newPrio = '';
-  if ( prio === 1) {
+  if (prio === 1) {
     newPrio = 'low'
   } else if (prio === 2) {
     newPrio = 'medium'
@@ -44,27 +44,22 @@ const TaskItem = ({ id, text, done, prio, difficulty, details }) => {
       .eq('id', id)
   }
 
-  async function handleChange(value) {
-    const { data } = await supabase
-      .from('todos')
-      .update({ difficulty: value })
-      .eq('id', id)
-    window.location.reload();
-  }
-
   return (
     <HStack key={id} spacing={4}>
       <Text w="100%" p="5px" borderRadius="lg">
         {text}
       </Text>
-      <Details details={details}/>
-      <>
-        <Badge colorScheme={renderColorBadge(newPrio)}>
-          {newPrio}
-        </Badge>
-      </>
+
+      <Details details={details} />
+
+      <Badge colorScheme={renderColorBadge(newPrio)}>
+        {newPrio}
+      </Badge>
+
       <Difficulty difficulty={difficulty} id={id} />
+
       <Checkbox onChange={handleOnChange} defaultChecked={done}></Checkbox>
+      
     </HStack>
   )
 }
