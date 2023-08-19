@@ -22,6 +22,7 @@ import { supabase } from '../supabase';
 import { renderColorBadge } from '../helpers';
 import Details from './Details';
 import Difficulty from './Difficulty';
+import Prio from './Prio';
 
 
 const TaskItem = ({ id, text, done, prio, difficulty, details }) => {
@@ -52,14 +53,12 @@ const TaskItem = ({ id, text, done, prio, difficulty, details }) => {
 
       <Details details={details} />
 
-      <Badge colorScheme={renderColorBadge(newPrio)}>
-        {newPrio}
-      </Badge>
+      <Prio prio={prio}/>
 
       <Difficulty difficulty={difficulty} id={id} />
 
       <Checkbox onChange={handleOnChange} defaultChecked={done}></Checkbox>
-      
+
     </HStack>
   )
 }
