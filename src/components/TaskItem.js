@@ -27,7 +27,6 @@ import Prio from './Prio';
 
 const TaskItem = ({ id, text, done, prio, difficulty, details }) => {
 
-  const [showTooltip, setShowTooltip] = useState(false);
   let newPrio = '';
   if (prio === 1) {
     newPrio = 'low'
@@ -39,9 +38,14 @@ const TaskItem = ({ id, text, done, prio, difficulty, details }) => {
 
   async function handleOnChange(e) {
     const value = e.target.checked;
+    const { data: todos } = await supabase
+            .from('todos')
+            .select('done_time')
+            .eq('id', id)
+    const arrDoneTime = todos[0].done_time
     const { data, error } = await supabase
       .from('todos')
-      .update({ done: value, done_time: new Date() })
+      .update({ done: value, done_time: [...arrDoneTime, new Date()]})
       .eq('id', id)
   }
 
@@ -53,7 +57,7 @@ const TaskItem = ({ id, text, done, prio, difficulty, details }) => {
 
       <Details details={details} />
 
-      <Prio prio={prio}/>
+      <Prio prio={prio} />
 
       <Difficulty difficulty={difficulty} id={id} />
 
