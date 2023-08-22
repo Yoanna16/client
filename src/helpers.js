@@ -30,6 +30,18 @@ export function sortFunctionPrio(data, sortType) {
   return data; 
 }
 
+export function handleSortPrio(tasks, setTasks, sortType, setSortType) {
+  if(sortType === 'ascending') {
+    sortFunctionPrio(tasks, 'ascending')
+    setTasks(tasks)
+    setSortType('descending')
+} else if (sortType === 'descending') {
+    sortFunctionPrio(tasks, 'descending')
+    setTasks(tasks)
+    setSortType('ascending')
+}
+}
+
 export function sortFunctionDifficulty(data, sortType) {
   if(sortType === "ascending") {
     data.sort((a,b) => a.difficulty - b.difficulty)
@@ -39,6 +51,18 @@ export function sortFunctionDifficulty(data, sortType) {
   return data; 
 }
 
+export function handleSortDiff(tasks, setTasks, sortDiff, setSortDiff) {
+  if(sortDiff === 'ascending') {
+    sortFunctionDifficulty(tasks, 'ascending', setSortDiff)
+    setTasks(tasks)
+    setSortDiff('descending')
+} else if (sortDiff === 'descending') {
+    sortFunctionDifficulty(tasks, 'descending')
+    setTasks(tasks)
+    setSortDiff('ascending')
+}
+}
+
 export function sortFunctionDone(data, sortType) {
   if(sortType === "true") {
     data.sort((a,b) =>b.done - a.done)
@@ -46,4 +70,16 @@ export function sortFunctionDone(data, sortType) {
     data.sort((a,b) => a.done - b.done)
   }
   return data;
+}
+
+export function handleSortDone(tasks, setTasks, sortDone, setSortDone) {
+  if(sortDone === 'false') {
+    sortFunctionDone(tasks, 'false')
+    setTasks(tasks);
+    setSortDone('true')
+} else if (sortDone === 'true') {
+    sortFunctionDone(tasks, 'true')
+    setTasks(tasks)
+    setSortDone('false')
+}
 }
