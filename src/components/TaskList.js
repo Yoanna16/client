@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { HStack, StackDivider, VStack, Text, Box, Image, Radio, Checkbox, Button, IconButton } from '@chakra-ui/react'
 import { CheckIcon } from '@chakra-ui/icons'
 import TaskItem from './TaskItem';
-import { sortFunctionPrio, sortFunctionDifficulty } from '../helpers';
-import img from '../images/empty.svg';
+import { sortFunctionPrio, sortFunctionDifficulty, sortFunctionDone } from '../helpers';
 import { supabase } from '../supabase';
 
 function TaskList() {
@@ -11,11 +10,12 @@ function TaskList() {
     const [tasks, setTasks] = useState([]);
     const [sortType, setSortType] = useState('ascending');
     const [sortDiff, setSortDiff] = useState('ascending');
+    const [sortDone, setSortDone] = useState('false');
 
     async function fetchData() {
         let { data: tasks, error } = await supabase.from('todos').select('*');
-        console.log(tasks)
-        setTasks(tasks);
+        const recommendFirst = tasks.sort((a, b) => b.recommended - a.recommended);
+        setTasks(recommendFirst);
     }
 
     function handleSortPrio() {
@@ -42,6 +42,18 @@ function TaskList() {
         }
     }
 
+    function handleSortDone() {
+        if(sortDone === 'false') {
+            sortFunctionDone(tasks, 'false')
+            setTasks(tasks);
+            setSortDone('true')
+        } else if (sortDone === 'true') {
+            sortFunctionDone(tasks, 'true')
+            setTasks(tasks)
+            setSortDone('false')
+        }
+    }
+
     useEffect(() => {
         const tasks = supabase.channel('custom-all-channel')
             .on(
@@ -54,12 +66,6 @@ function TaskList() {
             .subscribe()
         fetchData();
     }, []);
-
-    if (!tasks.length) {
-        return (<Box align="center">
-            <Image src={img} mt="30px" maxW="95%" />
-        </Box>)
-    }
     return (
         <>
             <VStack
@@ -78,10 +84,10 @@ function TaskList() {
                 <Text w="120%" p="8px" borderRadius="lg"></Text>
                 <Button m='0px'minW={'-webkit-min-content'}variant={'link'} colorScheme="blue" margin-right={5} onClick={handleSortPrio}>Prio</Button>
                 <Button minW={'-webkit-min-content'}variant={'link'}  colorScheme="blue"margin-right={5} onClick={handleSortDiff}>Difficulty</Button>
-                <IconButton minW={'-webkit-min-content'}variant={'link'}  colorScheme="blue" icon={<CheckIcon />}></IconButton>
+                <IconButton minW={'-webkit-min-content'}variant={'link'}  colorScheme="blue" icon={<CheckIcon />} onClick={handleSortDone}></IconButton>
                 </HStack>
                 {tasks.map(task => {
-                    return <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio} difficulty={task.difficulty} details={task.details}></TaskItem>
+                    return <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio} difficulty={task.difficulty} details={task.details} recommended={task.recommended}></TaskItem>
                 })}
             </VStack>
         </>

@@ -23,8 +23,8 @@ function App() {
       >
         Todo List
       </Heading>  
-      <RecommendTask />
       <TaskList/>
+      <RecommendTask />
     </VStack>
     </>
     

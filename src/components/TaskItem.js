@@ -25,7 +25,7 @@ import Difficulty from './Difficulty';
 import Prio from './Prio';
 
 
-const TaskItem = ({ id, text, done, prio, difficulty, details }) => {
+const TaskItem = ({ id, text, done, prio, difficulty, details, recommended }) => {
 
   let newPrio = '';
   if (prio === 1) {
@@ -50,7 +50,7 @@ const TaskItem = ({ id, text, done, prio, difficulty, details }) => {
   }
 
   return (
-    <HStack key={id} spacing={4}>
+    <HStack key={id} spacing={4} border={recommended ? '1px' : 'none'} borderColor={recommended ? 'blue' : 'none'} bgColor={recommended ? 'yellow' : 'white'}>
       <Text w="100%" p="5px" borderRadius="lg">
         {text}
       </Text>

@@ -20,7 +20,7 @@ const Prio = ({ prio }) => {
 
   return (
 
-      <Badge colorScheme={renderColorBadge(newPrio)}>
+      <Badge variant='solid' colorScheme={renderColorBadge(newPrio)}>
         {newPrio}
       </Badge>
 
