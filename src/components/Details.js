@@ -10,7 +10,6 @@ import {
 
 } from '@chakra-ui/react'
 import { useDisclosure } from '@chakra-ui/react'
-import { supabase } from '../supabase';
 
 const Details = ({ details }) => {
 

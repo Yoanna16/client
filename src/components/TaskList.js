@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { HStack, StackDivider, VStack, Text, Box, Image, Radio, Checkbox, Button, IconButton } from '@chakra-ui/react'
+import { HStack, StackDivider, VStack, Text, Button, IconButton } from '@chakra-ui/react'
 import { CheckIcon } from '@chakra-ui/icons'
 import TaskItem from './TaskItem';
 import { sortFunctionPrio, sortFunctionDifficulty, sortFunctionDone } from '../helpers';

@@ -19,7 +19,6 @@ function AddTask() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-  
     const { data, error } = await supabase
       .from('todos')
       .insert([

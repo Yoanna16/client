@@ -1,7 +1,6 @@
 import React from 'react';
 import { Slider, SliderMark, SliderTrack, SliderFilledTrack, Tooltip, SliderThumb, HStack, Button } from '@chakra-ui/react';
 
-
 const DefineStress = () => {
   return (
     <div>

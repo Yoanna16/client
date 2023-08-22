@@ -1,25 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   HStack,
   Text,
   Checkbox,
-  Badge,
-  Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  Slider,
-  SliderFilledTrack,
-  SliderTrack,
-  Tooltip,
-  SliderThumb,
 } from '@chakra-ui/react'
-import { useDisclosure } from '@chakra-ui/react'
 import { supabase } from '../supabase';
-import { renderColorBadge } from '../helpers';
 import Details from './Details';
 import Difficulty from './Difficulty';
 import Prio from './Prio';
