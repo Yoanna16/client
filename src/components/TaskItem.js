@@ -28,14 +28,24 @@ const TaskItem = ({ id, text, done, prio, difficulty, details, recommended }) =>
             .select('done_time')
             .eq('id', id)
     const arrDoneTime = todos[0].done_time
-    const { data, error } = await supabase
+    const { data: recommended } = await supabase.from('todos').select('recommended').eq('id', id)
+    const rec = recommended[0].recommended
+    if (rec === true) {
+      const { data, error } = await supabase
+      .from('todos')
+      .update({ done: value, done_time: [...arrDoneTime, new Date()], recommended: false})
+      .eq('id', id)
+    } else {
+      const { data, error } = await supabase
       .from('todos')
       .update({ done: value, done_time: [...arrDoneTime, new Date()]})
       .eq('id', id)
+    }
+    window.location.reload();
   }
 
   return (
-    <HStack key={id} spacing={4} border={recommended ? '1px' : 'none'} borderColor={recommended ? 'blue' : 'none'} bgColor={recommended ? 'yellow' : 'white'}>
+    <HStack key={id} spacing={4} border={recommended && !done ? '1px' : 'none'} borderColor={recommended && !done ? 'blue' : 'none'} bgColor={recommended && !done ? 'yellow' : 'white'}>
       <Text w="100%" p="5px" borderRadius="lg">
         {text}
       </Text>
@@ -46,7 +56,7 @@ const TaskItem = ({ id, text, done, prio, difficulty, details, recommended }) =>
 
       <Difficulty difficulty={difficulty} id={id} />
 
-      <Checkbox onChange={handleOnChange} defaultChecked={done}></Checkbox>
+      <Checkbox onChange={(e) => handleOnChange(e)} defaultChecked={done}></Checkbox>
 
     </HStack>
   )

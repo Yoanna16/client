@@ -63,7 +63,19 @@ export function calculateTaskScores(difficultyDifferences, taskPriorities) {
 // Recommend the task with the minimum score, which represents a balance between difficulty and priority: 
 export function recommendTask(taskScores) {
     const minScore = Math.min(...taskScores);
-    return taskScores.indexOf(minScore);
+    const minScoreIndices = [];
+    for (let i = 0; i < taskScores.length; i++) {
+        if (taskScores[i] === minScore) {
+            minScoreIndices.push(i);
+        }
+    }
+
+    return minScoreIndices;
+}
+
+export function getRandomIndex(minScoreIndices) {
+    const randomInd = minScoreIndices[(Math.floor(Math.random() * minScoreIndices.length))]
+   return randomInd;
 }
 
 /* const baseline1 = 90; 

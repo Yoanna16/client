@@ -4,7 +4,7 @@ import {
   Button,
 } from '@chakra-ui/react'
 import { supabase } from '../supabase';
-import { getBaselineValues, getMeasuredStress, getIdealDifficulty, calculateAbsoluteDifferencesDifficulty, calculateTaskScores, recommendTask } from '../helper_baseline';
+import { getBaselineValues, getMeasuredStress, getIdealDifficulty, calculateAbsoluteDifferencesDifficulty, calculateTaskScores, recommendTask, getRandomIndex } from '../helper_baseline';
 
 const RecommendTask = () => {
 
@@ -27,7 +27,7 @@ const RecommendTask = () => {
     const prioValues = [];
     const diffValues = [];
     tsk.forEach(item => {
-      if(item.done === false && item.recommended == null) {
+      if(item.done === false && item.done_time.length === 1 && item.recommended === null) {
         tasks.push(item);
         ids.push(item.id);
         prioValues.push(item.prio)
@@ -40,34 +40,7 @@ const RecommendTask = () => {
     setDiff(diffValues);
   }
 
-/*   async function fetchIds() {
-    let { data: ids, error } = await supabase
-      .from('todos')
-      .select('id')
-    const idValues = [];
-    ids.forEach(id => {
-      idValues.push(id.id);
-    })
-    setIds(idValues);
-  } */
 
-/*   async function fetchDataPrio() {
-    let { data: prios, error } = await supabase.from('todos').select('prio');
-    const prioValues = []
-    prios.forEach(element => {
-      prioValues.push(element.prio)
-    });
-    setPrios(prioValues);
-  } */
-
-/*   async function fetchDataDiff() {
-    let { data: diff, error } = await supabase.from('todos').select('difficulty');
-    const diffValue = []
-    diff.forEach(element => {
-      diffValue.push(element.difficulty)
-    });
-    setDiff(diffValue);
-  } */
 
   async function fetchBaseline_1() {
     let { data: baseline_1, error } = await supabase
@@ -102,8 +75,9 @@ const RecommendTask = () => {
     const difficultyDifferences = calculateAbsoluteDifferencesDifficulty(idealDiff, difficulties);
     const taskScores = calculateTaskScores(difficultyDifferences, prios);
     const indexOfMinScore = recommendTask(taskScores);
+    const randomInd = getRandomIndex(indexOfMinScore)
     //need to check whether the task that is recommended is not 'done'
-    const id = ids[indexOfMinScore];
+    const id = ids[randomInd];
 
     const { data, error } = await supabase.from('todos').update({ recommended: true }).eq('id', id)
   }
