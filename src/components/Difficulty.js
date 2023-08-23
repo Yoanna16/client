@@ -17,7 +17,7 @@ import { renderDiffColors } from '../helpers';
 
 
 
-const Difficulty = ({ difficulty, id }) => {
+const Difficulty = ({ difficulty, id, onDifficultyChange }) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const [diff, setDifficulty] = useState('');
 
@@ -26,7 +26,9 @@ const Difficulty = ({ difficulty, id }) => {
             .from('todos')
             .update({ difficulty: value })
             .eq('id', id)
-        window.location.reload();
+        
+        onDifficultyChange();
+        //window.location.reload();
     }
 
     return (

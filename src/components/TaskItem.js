@@ -10,7 +10,7 @@ import Difficulty from './Difficulty';
 import Prio from './Prio';
 
 
-const TaskItem = ({ id, text, done, prio, difficulty, details, recommended }) => {
+const TaskItem = ({ id, text, done, prio, difficulty, details, recommended, onRecommendedChange, onDifficultyChange }) => {
 
   let newPrio = '';
   if (prio === 1) {
@@ -41,7 +41,7 @@ const TaskItem = ({ id, text, done, prio, difficulty, details, recommended }) =>
       .update({ done: value, done_time: [...arrDoneTime, new Date()]})
       .eq('id', id)
     }
-    window.location.reload();
+    onRecommendedChange()
   }
 
   return (
@@ -54,7 +54,7 @@ const TaskItem = ({ id, text, done, prio, difficulty, details, recommended }) =>
 
       <Prio prio={prio} />
 
-      <Difficulty difficulty={difficulty} id={id} />
+      <Difficulty difficulty={difficulty} id={id} onDifficultyChange={onDifficultyChange} />
 
       <Checkbox onChange={(e) => handleOnChange(e)} defaultChecked={done}></Checkbox>
 

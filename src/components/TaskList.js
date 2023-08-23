@@ -9,10 +9,6 @@ import { supabase } from '../supabase';
 function TaskList() {
 
     const [tasks, setTasks] = useState([]);
-    const [prios, setPrios] = useState([]);
-    const [difficulties, setDiff] = useState([]);
-    const [ids, setIds] = useState([]);
-    const [recommended, setRecommended] = useState([]);
 
     // ECG DATA
     const [baseline_1, setBaseline_1] = useState();
@@ -23,6 +19,16 @@ function TaskList() {
     const [sortType, setSortType] = useState('ascending');
     const [sortDiff, setSortDiff] = useState('ascending');
     const [sortDone, setSortDone] = useState('false');
+
+    const onRecommendedChange = async () => {
+        const tasks = await fetchData();
+        setTasks(tasks)
+    }
+
+    const onDifficultyChange = async () => {
+        const tasks = await fetchData();
+        setTasks(tasks)
+    }
 
     async function fetchData() {
         let { data: tasks, error } = await supabase.from('todos').select('*');
@@ -92,8 +98,6 @@ function TaskList() {
     useEffect(() => {
         async function fetchDataAndCalculate() {
 
-            const fetchedTasks = await fetchData();
-
             // the baselines will never change so I can keep them as state values useMemo or useCallback 
             const fetchedBaseline_1 = await fetchBaseline_1();
             const fetchedBaseline_2 = await fetchBaseline_2();
@@ -119,17 +123,15 @@ function TaskList() {
 
             const id = ids1[randomInd];
             console.log(id)
-            async function addRecommendation(id) {
-                const { data } = await supabase
+            await supabase
                     .from('todos')
                     .update({ recommended: true })
                     .eq('id', id)
-            }
+            const fetchedTasks = await fetchData();
+            console.log(fetchedTasks)
             setTasks(fetchedTasks);
-            addRecommendation(id)
         }
         fetchDataAndCalculate();
-
     }, []);
 
     return (
@@ -152,8 +154,9 @@ function TaskList() {
                     <Button minW={'-webkit-min-content'} variant={'link'} colorScheme="blue" margin-right={5} onClick={() => handleSortDiff(tasks, setTasks, sortDiff, setSortDiff)}>Difficulty</Button>
                     <IconButton minW={'-webkit-min-content'} variant={'link'} colorScheme="blue" icon={<CheckIcon />} onClick={() => handleSortDone(tasks, setTasks, sortDone, setSortDone)}></IconButton>
                 </HStack>
-                {tasks.map(task => {
-                    return <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio} difficulty={task.difficulty} details={task.details} recommended={task.recommended}></TaskItem>
+                {tasks &&
+                 tasks?.map(task => {
+                    return <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio} difficulty={task.difficulty} details={task.details} recommended={task.recommended} onRecommendedChange={onRecommendedChange} onDifficultyChange={onDifficultyChange}></TaskItem>
                 })}
             </VStack>
         </>

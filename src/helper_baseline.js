@@ -31,10 +31,7 @@ export function getMeasuredStress(hrv, baseline) {
     } else if ( hrv < thresholdLower ) {
         measuredStress = 2 // High Stress
     } else {
-        const stressRange = thresholdUpper - thresholdLower;
-        //const stressIncrement = stressRange / 6; // Divide the range into 6 parts
-        const measuredStress =(thresholdUpper - hrv) / stressRange;
-        return Math.round(measuredStress*4)/2;
+        measuredStress = 1;
     }
     return measuredStress;
 }
