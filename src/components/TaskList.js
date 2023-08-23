@@ -7,6 +7,11 @@ import { getBaselineValues, getMeasuredStress, getIdealDifficulty, calculateAbso
 import { supabase } from '../supabase';
 
 function TaskList() {
+    // we get values about baseline 1 and 2
+    // also already the first HRV
+    // then the user musts set the difficulties by their own choice
+    // after that we can recommend a task to the user
+    // always show one recommendation at a time?
 
     const [tasks, setTasks] = useState([]);
 
@@ -49,7 +54,6 @@ function TaskList() {
         })
         return prioValues;
     }
-
 
     async function fetchDataDiff() {
         let { data: tasks, error } = await supabase.from('todos').select('*');

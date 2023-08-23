@@ -28,7 +28,6 @@ const Difficulty = ({ difficulty, id, onDifficultyChange }) => {
             .eq('id', id)
         
         onDifficultyChange();
-        //window.location.reload();
     }
 
     return (
