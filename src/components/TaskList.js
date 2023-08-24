@@ -19,8 +19,8 @@ function TaskList() {
     const [baseline_1, setBaseline_1] = useState();
     const [baseline_2, setBaseline_2] = useState();
     const [hrv, setHrv] = useState();
-    const [recommId, setRecommendedId] = useState(0);
-    const [isInitiliazed, setIsInitialized] = useState(false);
+    /* const [recommId, setRecommendedId] = useState(0);
+    const [isInitiliazed, setIsInitialized] = useState(false); */
 
     //Sorting
     const [sortType, setSortType] = useState('ascending');
@@ -91,10 +91,6 @@ function TaskList() {
         let hrv_Value = hrv_data[hrv_data.length - 1].hrv_value
         setHrv(hrv_Value)
         console.log('hrvvvv', hrv)
-        const itemId = await getRecommendedItemId();
-        await supabase.from('todos').update({ recommended: true }).eq('id', itemId)
-        const tasks = await fetchData();
-        setTasks(tasks)
     }
 
     async function removeRecommendations() {
@@ -104,6 +100,13 @@ function TaskList() {
         })
         const { data: updated } = await supabase.from('todos').select('*')
         console.log('updated', updated)
+    }
+
+    async function addToRecTime(id) {
+        const { data: todos } = await supabase.from('todos').select('recommended_time').eq('id', id)
+        const arrDoneTime = todos[0].recommended_time
+        console.log('rec', arrDoneTime)
+        await supabase.from('todos').update({ recommended_time: [...arrDoneTime, new Date()] }).eq('id', id)
     }
 
     async function getRecommendedItemId() {
@@ -134,9 +137,9 @@ function TaskList() {
             var indexOfMinScore = recommendTask(taskScores);
             var randomInd = getRandomIndex(indexOfMinScore);
             var id = ids1[randomInd];
+            addToRecTime(id)
         }
 
-        await addToRecTime(id)
         return id;
     }
 
@@ -149,7 +152,7 @@ function TaskList() {
 
     const onDifficultyChange = async () => {
         var differences = await fetchDataDiff();
-        if (differences.every(element => element !== null) && differences.length === tasks.length){
+        if (differences.every(element => element !== null) && differences.length === 9) {
             const itemId = await getRecommendedItemId();
             await supabase.from('todos').update({ recommended: true }).eq('id', itemId)
         }
@@ -157,36 +160,26 @@ function TaskList() {
         setTasks(tasks1)
     }
 
-    async function addToRecTime(id) {
-        const { data: todos } = await supabase.from('todos').select('recommended_time').eq('id', id)
-        const arrDoneTime = todos[0].recommended_time
-        console.log('rec', arrDoneTime)
-        await supabase.from('todos').update({ recommended_time: [...arrDoneTime, new Date()]}).eq('id', id)
-    }
-
     useEffect(() => {
-       console.log('USE EFFECT')
-        
-            async function fetchDataAndCalculate() {
-                
-                //the hrv will change every 15 sek
-                 const intervalHrv = setInterval(() => {
-                     fetchHrv(); // <-- (3) invoke in interval callback
-                 }, 30000);  
-                 fetchHrv()
-                 console.log('HRV fetched', hrv)
+        console.log('USE EFFECT')
 
-       /*          const idToRecommend = await getRecommendedItemId()
-                await supabase.from('todos').update({ recommended: true }).eq('id', idToRecommend)
-                const fetchT = await fetchData();
-                setTasks(fetchT); */
-    
-               return () => clearInterval(intervalHrv);
-               
-            }
+        //the hrv will change every 15 sek
+        const intervalHrv = setInterval(() => {
+            fetchHrv(); // <-- (3) invoke in interval callback
+        }, 30000);
+        fetchHrv()
 
-            fetchDataAndCalculate();
-        
+        async function fetchAndSetRec() {
+            const itemId = await getRecommendedItemId();
+            await supabase.from('todos').update({ recommended: true }).eq('id', itemId)
+            const tasks = await fetchData();
+            setTasks(tasks)
+        }
+        fetchAndSetRec();
+        console.log('HRV fetched', hrv)
+
+
+        return () => clearInterval(intervalHrv);
 
     }, []);
 
