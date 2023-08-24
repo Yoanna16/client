@@ -19,21 +19,14 @@ function TaskList() {
     const [baseline_1, setBaseline_1] = useState();
     const [baseline_2, setBaseline_2] = useState();
     const [hrv, setHrv] = useState();
+    const [recommId, setRecommendedId] = useState(0);
+    const [isInitiliazed, setIsInitialized] = useState(false);
 
     //Sorting
     const [sortType, setSortType] = useState('ascending');
     const [sortDiff, setSortDiff] = useState('ascending');
     const [sortDone, setSortDone] = useState('false');
 
-    const onRecommendedChange = async () => {
-        const tasks = await fetchData();
-        setTasks(tasks)
-    }
-
-    const onDifficultyChange = async () => {
-        const tasks = await fetchData();
-        setTasks(tasks)
-    }
 
     async function fetchData() {
         let { data: tasks, error } = await supabase.from('todos').select('*');
@@ -48,7 +41,7 @@ function TaskList() {
         tasks.sort((a, b) => b.recommended - a.recommended)
         const prioValues = [];
         tasks.forEach(item => {
-            if (item.done === false && item.done_time.length === 1 && item.recommended === null) {
+            if (item.done === false && item.recommended === false && item.difficulty !== null) {
                 prioValues.push(item.prio)
             }
         })
@@ -61,7 +54,7 @@ function TaskList() {
         tasks.sort((a, b) => b.recommended - a.recommended)
         const diffValues = [];
         tasks.forEach(item => {
-            if (item.done === false && item.done_time.length === 1 && item.recommended === null) {
+            if (item.done === false && item.recommended === false && item.difficulty !== null) {
                 diffValues.push(item.difficulty)
             }
         })
@@ -74,7 +67,7 @@ function TaskList() {
         tasks.sort((a, b) => b.recommended - a.recommended)
         const ids = [];
         tasks.forEach(item => {
-            if (item.done === false && item.done_time.length === 1 && item.recommended === null) {
+            if (item.done === false && item.recommended === false && item.difficulty !== null) {
                 ids.push(item.id)
             }
         })
@@ -96,46 +89,105 @@ function TaskList() {
     async function fetchHrv() {
         let { data: hrv_data, error } = await supabase.from('hrv_data').select('hrv_value');
         let hrv_Value = hrv_data[hrv_data.length - 1].hrv_value
-        return hrv_Value
+        setHrv(hrv_Value)
+        console.log('hrvvvv', hrv)
+        const itemId = await getRecommendedItemId();
+        await supabase.from('todos').update({ recommended: true }).eq('id', itemId)
+        const tasks = await fetchData();
+        setTasks(tasks)
+    }
+
+    async function removeRecommendations() {
+        const { data: fetchedId } = await supabase.from('todos').select('id')
+        fetchedId.forEach(async id => {
+            await supabase.from('todos').update({ recommended: false }).eq('id', id.id)
+        })
+        const { data: updated } = await supabase.from('todos').select('*')
+        console.log('updated', updated)
+    }
+
+    async function getRecommendedItemId() {
+        await removeRecommendations()
+
+        var fetchedBaseline_1 = await fetchBaseline_1();
+        setBaseline_1(fetchedBaseline_1);
+        var fetchedBaseline_2 = await fetchBaseline_2();
+        setBaseline_2(fetchedBaseline_2);
+
+        var thresholds = getBaselineValues(baseline_1, baseline_2);
+
+        var prios1 = await fetchDataPrio();
+        console.log('prios', prios1)
+        var differences = await fetchDataDiff();
+        console.log('diff', differences)
+        var ids1 = await fetchDataIds();
+
+
+        // this will change probably
+        var measuredStress = getMeasuredStress(hrv, thresholds);
+        var idealDiff = getIdealDifficulty(measuredStress);
+
+
+        if (differences.every(element => element !== null)) {
+            var difficultyDifferences = calculateAbsoluteDifferencesDifficulty(idealDiff, differences);
+            var taskScores = calculateTaskScores(difficultyDifferences, prios1);
+            var indexOfMinScore = recommendTask(taskScores);
+            var randomInd = getRandomIndex(indexOfMinScore);
+            var id = ids1[randomInd];
+        }
+
+        await addToRecTime(id)
+        return id;
+    }
+
+    const onRecommendedChange = async () => {
+        const itemId = await getRecommendedItemId();
+        await supabase.from('todos').update({ recommended: true }).eq('id', itemId)
+        const tasks = await fetchData();
+        setTasks(tasks)
+    }
+
+    const onDifficultyChange = async () => {
+        var differences = await fetchDataDiff();
+        if (differences.every(element => element !== null) && differences.length === tasks.length){
+            const itemId = await getRecommendedItemId();
+            await supabase.from('todos').update({ recommended: true }).eq('id', itemId)
+        }
+        const tasks1 = await fetchData();
+        setTasks(tasks1)
+    }
+
+    async function addToRecTime(id) {
+        const { data: todos } = await supabase.from('todos').select('recommended_time').eq('id', id)
+        const arrDoneTime = todos[0].recommended_time
+        console.log('rec', arrDoneTime)
+        await supabase.from('todos').update({ recommended_time: [...arrDoneTime, new Date()]}).eq('id', id)
     }
 
     useEffect(() => {
-        async function fetchDataAndCalculate() {
+       console.log('USE EFFECT')
+        
+            async function fetchDataAndCalculate() {
+                
+                //the hrv will change every 15 sek
+                 const intervalHrv = setInterval(() => {
+                     fetchHrv(); // <-- (3) invoke in interval callback
+                 }, 30000);  
+                 fetchHrv()
+                 console.log('HRV fetched', hrv)
 
-            // the baselines will never change so I can keep them as state values useMemo or useCallback 
-            const fetchedBaseline_1 = await fetchBaseline_1();
-            const fetchedBaseline_2 = await fetchBaseline_2();
+       /*          const idToRecommend = await getRecommendedItemId()
+                await supabase.from('todos').update({ recommended: true }).eq('id', idToRecommend)
+                const fetchT = await fetchData();
+                setTasks(fetchT); */
+    
+               return () => clearInterval(intervalHrv);
+               
+            }
 
-            // the hrv will change every 15 sek
-            const fetchedHrv = await fetchHrv();
+            fetchDataAndCalculate();
+        
 
-            const prios1 = await fetchDataPrio();
-            const diffValues = await fetchDataDiff();
-            const ids1 = await fetchDataIds();
-
-            // thresholds are always the same 
-            const thresholds = getBaselineValues(fetchedBaseline_1, fetchedBaseline_2);
-
-            // this will change probably
-            const measuredStress = getMeasuredStress(fetchedHrv, thresholds);
-            const idealDiff = getIdealDifficulty(measuredStress);
-
-            const difficultyDifferences = calculateAbsoluteDifferencesDifficulty(idealDiff, diffValues);
-            const taskScores = calculateTaskScores(difficultyDifferences, prios1);
-            const indexOfMinScore = recommendTask(taskScores);
-            const randomInd = getRandomIndex(indexOfMinScore)
-
-            const id = ids1[randomInd];
-            console.log(id)
-            await supabase
-                    .from('todos')
-                    .update({ recommended: true })
-                    .eq('id', id)
-            const fetchedTasks = await fetchData();
-            console.log(fetchedTasks)
-            setTasks(fetchedTasks);
-        }
-        fetchDataAndCalculate();
     }, []);
 
     return (
@@ -159,9 +211,9 @@ function TaskList() {
                     <IconButton minW={'-webkit-min-content'} variant={'link'} colorScheme="blue" icon={<CheckIcon />} onClick={() => handleSortDone(tasks, setTasks, sortDone, setSortDone)}></IconButton>
                 </HStack>
                 {tasks &&
-                 tasks?.map(task => {
-                    return <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio} difficulty={task.difficulty} details={task.details} recommended={task.recommended} onRecommendedChange={onRecommendedChange} onDifficultyChange={onDifficultyChange}></TaskItem>
-                })}
+                    tasks?.map(task => {
+                        return <TaskItem id={task.id} text={task.text} done={task.done} prio={task.prio} difficulty={task.difficulty} details={task.details} recommended={task.recommended} onRecommendedChange={onRecommendedChange} onDifficultyChange={onDifficultyChange}></TaskItem>
+                    })}
             </VStack>
         </>
     )

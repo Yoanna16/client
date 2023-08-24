@@ -45,7 +45,7 @@ const TaskItem = ({ id, text, done, prio, difficulty, details, recommended, onRe
   }
 
   return (
-    <HStack key={id} spacing={4} border={recommended && !done ? '1px' : 'none'} borderColor={recommended && !done ? 'blue' : 'none'} bgColor={recommended && !done ? 'yellow' : 'white'}>
+    <HStack key={id} spacing={4} borderRadius={recommended && !done ? '10px' : 'none'} bgColor={recommended && !done ? 'yellow.100' : 'white'}>
       <Text w="100%" p="5px" borderRadius="lg">
         {text}
       </Text>

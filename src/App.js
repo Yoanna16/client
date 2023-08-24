@@ -24,7 +24,6 @@ function App() {
         Todo List
       </Heading>  
       <TaskList/>
-      <RecommendTask />
     </VStack>
     </>
     
