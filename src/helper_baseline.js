@@ -20,6 +20,9 @@ export function getBaselineValues(baseline1, baseline2) {
     ]
 }
 
+/**
+ * @returns The measured stress mapped to the 1, 2, 3 values.
+ */
 export function getMeasuredStress(hrv, baseline) {
 
     const [ thresholdUpper, thresholdLower ] = baseline;
@@ -36,20 +39,25 @@ export function getMeasuredStress(hrv, baseline) {
     return measuredStress;
 }
 
-// Calculate Ideal Difficulty
+/**
+ * @returns The ideal difficulty and the difficulties of all tasks.
+ */
 export function getIdealDifficulty(measuredStress) {
     let idealDiff = -50*measuredStress+100;
     return idealDiff
 }
 
-// Calculate absolute differences between the ideal difficulty and the difficulties of all tasks:
+/**
+ * @returns Absolute differences between the ideal difficulty and the difficulties of all tasks.
+ */
 export function calculateAbsoluteDifferencesDifficulty(idealDifficulty, taskDifficulties) {
     const difficultyDifferences = taskDifficulties.map(taskDifficulty => Math.abs(idealDifficulty - taskDifficulty));
     return difficultyDifferences;
 }
 
-
-// Calculate task scores considering both difficulty and priority 
+/**
+ * @returns Task scores considering both difficulty and priority.
+ */
 export function calculateTaskScores(difficultyDifferences, taskPriorities) {
     const priorityWeight = 8;
     return difficultyDifferences.map((difficultyDifference, index) =>
@@ -57,7 +65,9 @@ export function calculateTaskScores(difficultyDifferences, taskPriorities) {
     );
 }
 
-// Recommend the task with the minimum score, which represents a balance between difficulty and priority: 
+/**
+ * @returns A list of all the min score indices.
+ */
 export function recommendTask(taskScores) {
     const minScore = Math.min(...taskScores);
     const minScoreIndices = [];
@@ -69,6 +79,10 @@ export function recommendTask(taskScores) {
 
     return minScoreIndices;
 }
+
+/**
+ * @returns The random index of the min scores in case there more than 1 cases with the same smallest min score.
+ */
 
 export function getRandomIndex(minScoreIndices) {
     const randomInd = minScoreIndices[(Math.floor(Math.random() * minScoreIndices.length))]
